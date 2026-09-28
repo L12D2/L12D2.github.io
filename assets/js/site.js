@@ -1,63 +1,249 @@
 // Small enhancements. The page is fully readable without this file.
 document.documentElement.classList.add('js');
 
-/* ── 1. Wind streamlines in the hero ─────────────────────────── */
-(function flow() {
+/* ── 1. Hero: NOx + VOC plume → ozone, on an MPAS-style mesh ─────
+   Smokestacks emit NOx and VOC. The wind carries the plume across a
+   hexagonal mesh (like an unstructured model grid). Where sunlight is
+   strong, NOx and VOC sharing a cell react to form ozone (O₃).
+   Each cell tints by the concentration passing through it.
+   Move the mouse up/down over the header to shift the wind.
+
+   Tweak these to change the look ↓                                   */
+const PLUME = {
+  stacks: [0.07, 0.19, 0.34],     // smokestack positions (fraction of width)
+  sun: { x: 0.86, y: 0.16 },      // sun position (fraction of width/height)
+  windSpeed: 0.95,                // pixels per frame
+  hexSize: 22,                    // mesh cell radius in pixels
+  reactionRate: 0.035,            // chance per frame a sunlit NOx+VOC pair reacts
+  maxParticles: 750,
+  colors: {                       // r, g, b
+    NOx: [236, 128, 140],         // rose
+    VOC: [128, 214, 172],         // mint
+    O3:  [248, 198, 112],         // gold
+  },
+};
+
+(function plume() {
   const canvas = document.querySelector('.hero__flow');
   if (!canvas) return;
+  const hero = canvas.parentElement;
   const ctx = canvas.getContext('2d');
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let w, h, dpr, particles, t = 0, running = true;
+  canvas.style.opacity = '1';     // this effect manages its own transparency
 
-  // A smooth, slowly-evolving vector field: westerly flow with gentle waves.
-  const field = (x, y) => {
-    const a = Math.sin(y * 0.004 + t * 0.15) * 0.9
-            + Math.cos(x * 0.003 - y * 0.002 + t * 0.1) * 0.6
-            + Math.sin((x + y) * 0.0015 + t * 0.05) * 0.4;
-    return a * 0.5; // angle offset from due east
-  };
+  const SQ3 = Math.sqrt(3), R = PLUME.hexSize, C = PLUME.colors;
+  const rgba = (c, a) => `rgba(${c[0]},${c[1]},${c[2]},${a})`;
+  let w, h, dpr, staticLayer, stacks = [], particles = [], flashes = [];
+  let cells = new Map(), t = 0, running = true, wind = -0.1, windTarget = -0.1;
+
+  // Deterministic random numbers so the skyline looks the same on every visit
+  function seeded(seed) {
+    return () => { seed = (seed + 0x6D2B79F5) | 0; let x = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+      x = (x + Math.imul(x ^ (x >>> 7), 61 | x)) ^ x; return ((x ^ (x >>> 14)) >>> 0) / 4294967296; };
+  }
+
+  // ── Hex-grid geometry (pointy-top, axial coordinates) ──
+  function pixelToHex(x, y) {
+    let q = (SQ3 / 3 * x - y / 3) / R, r = (2 / 3 * y) / R, s = -q - r;
+    let rq = Math.round(q), rr = Math.round(r), rs = Math.round(s);
+    const dq = Math.abs(rq - q), dr = Math.abs(rr - r), ds = Math.abs(rs - s);
+    if (dq > dr && dq > ds) rq = -rr - rs; else if (dr > ds) rr = -rq - rs;
+    return [rq, rr];
+  }
+  const hexCenter = (q, r) => [R * SQ3 * (q + r / 2), R * 1.5 * r];
+  function hexPath(c, cx, cy, size) {
+    c.beginPath();
+    for (let i = 0; i < 6; i++) {
+      const a = Math.PI / 180 * (60 * i - 30);
+      c[i ? 'lineTo' : 'moveTo'](cx + size * Math.cos(a), cy + size * Math.sin(a));
+    }
+    c.closePath();
+  }
+  const sunlight = (x, y) => Math.max(0, 1 - Math.hypot(x - w * PLUME.sun.x, (y - h * PLUME.sun.y) * 1.3) / (w * 0.62));
+
+  // ── Things drawn once per resize: mesh, skyline, stacks ──
+  function buildStatic() {
+    staticLayer = document.createElement('canvas');
+    staticLayer.width = w * dpr; staticLayer.height = h * dpr;
+    const s = staticLayer.getContext('2d');
+    s.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    // Mesh
+    s.strokeStyle = 'rgba(190,215,235,0.055)'; s.lineWidth = 1;
+    const rows = Math.ceil(h / (R * 1.5)) + 1, cols = Math.ceil(w / (R * SQ3)) + 2;
+    for (let r = -1; r <= rows; r++) for (let c = -1; c <= cols; c++) {
+      const [cx, cy] = hexCenter(c - Math.floor(r / 2), r);
+      hexPath(s, cx, cy, R); s.stroke();
+    }
+
+    // Skyline
+    const rand = seeded(7), base = h, sky = [];
+    for (let x = -10; x < w + 40;) {
+      const bw = 18 + rand() * 46, bh = 18 + rand() * (w < 700 ? 38 : 64);
+      sky.push([x, bw, bh]); x += bw + 2 + rand() * 4;
+    }
+    const grad = s.createLinearGradient(0, base - 90, 0, base);
+    grad.addColorStop(0, 'rgba(8,18,28,0.75)'); grad.addColorStop(1, 'rgba(6,14,22,0.95)');
+    s.fillStyle = grad;
+    for (const [x, bw, bh] of sky) s.fillRect(x, base - bh, bw, bh);
+    // lit windows
+    s.fillStyle = 'rgba(248,198,112,0.35)';
+    for (const [x, bw, bh] of sky) for (let wy = base - bh + 6; wy < base - 6; wy += 8)
+      for (let wx = x + 4; wx < x + bw - 4; wx += 7) if (rand() < 0.12) s.fillRect(wx, wy, 2, 3);
+
+    // Smokestacks
+    stacks = PLUME.stacks.map(f => ({ x: w * f, top: base - (w < 700 ? 70 : 104) }));
+    s.fillStyle = 'rgba(6,14,22,0.95)';
+    for (const st of stacks) {
+      s.fillRect(st.x - 4, st.top, 8, base - st.top);
+      s.fillStyle = 'rgba(236,128,140,0.5)'; s.fillRect(st.x - 4, st.top + 8, 8, 2);
+      s.fillStyle = 'rgba(6,14,22,0.95)';
+    }
+  }
 
   function resize() {
     dpr = Math.min(window.devicePixelRatio || 1, 2);
     w = canvas.clientWidth; h = canvas.clientHeight;
     canvas.width = w * dpr; canvas.height = h * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    const n = Math.round((w * h) / 2600);
-    particles = Array.from({ length: n }, spawn);
-    ctx.clearRect(0, 0, w, h);
+    particles = []; flashes = []; cells = new Map();
+    buildStatic();
   }
-  function spawn() {
-    return { x: Math.random() * w, y: Math.random() * h, age: Math.random() * 120, life: 80 + Math.random() * 140 };
-  }
-  function step() {
-    // Fade previous frame to leave soft trails
-    ctx.globalCompositeOperation = 'destination-out';
-    ctx.fillStyle = 'rgba(0,0,0,0.06)';
-    ctx.fillRect(0, 0, w, h);
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.lineWidth = 1;
-    for (const p of particles) {
-      const ang = field(p.x, p.y);
-      const nx = p.x + Math.cos(ang) * 1.1;
-      const ny = p.y + Math.sin(ang) * 1.1;
-      const fade = Math.sin((p.age / p.life) * Math.PI);
-      // warmer near the top-right "sun", cooler elsewhere
-      const warm = Math.max(0, 1 - Math.hypot(p.x - w * 0.85, p.y - h * 0.1) / (w * 0.7));
-      ctx.strokeStyle = warm > 0.3
-        ? `rgba(242,184,114,${0.35 * fade})`
-        : `rgba(205,225,238,${0.28 * fade})`;
-      ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(nx, ny); ctx.stroke();
-      p.x = nx; p.y = ny; p.age++;
-      if (p.age > p.life || p.x > w + 5 || p.y < -5 || p.y > h + 5) Object.assign(p, spawn(), { x: Math.random() * w * 0.3, age: 0 });
+
+  // ── Emission ──
+  function emit() {
+    const cap = Math.min(PLUME.maxParticles, Math.round(w * h / 1100));
+    if (particles.length >= cap) return;
+    for (const st of stacks) {
+      if (Math.random() < 0.55) particles.push({
+        x: st.x + (Math.random() - 0.5) * 4, y: st.top - 2,
+        kind: Math.random() < 0.6 ? 'NOx' : 'VOC', age: 0, life: 700 + Math.random() * 600,
+      });
     }
-    t += 0.01;
+    // Traffic and trees add VOC near street level
+    if (Math.random() < 0.35) particles.push({
+      x: Math.random() * w * 0.5, y: h - 20 - Math.random() * 30,
+      kind: 'VOC', age: 0, life: 600 + Math.random() * 500,
+    });
   }
-  function loop() { if (running) step(); requestAnimationFrame(loop); }
+
+  // ── One simulation step ──
+  function step() {
+    t += 0.01;
+    wind += (windTarget - wind) * 0.02;
+    emit();
+
+    const buckets = new Map();
+    for (const p of particles) {
+      // Wind field: mean flow + gentle waves; buoyant rise near the stack; turbulent mixing grows with age
+      const ang = wind + 0.28 * Math.sin(p.y * 0.006 + t * 2) + 0.2 * Math.cos(p.x * 0.004 - t * 1.5);
+      const sp = PLUME.windSpeed * (0.85 + 0.25 * Math.sin(p.x * 0.002 + t));
+      const rise = 1.1 * Math.exp(-p.age / 45);
+      const mix = 0.25 + Math.min(1.1, Math.sqrt(p.age) * 0.05);
+      p.x += Math.cos(ang) * sp + (Math.random() - 0.5) * mix;
+      p.y += Math.sin(ang) * sp - rise + (Math.random() - 0.5) * mix;
+      p.age++;
+      if (p.age > p.life || p.x > w + 10 || p.x < -10 || p.y < -10 || p.y > h) { p.dead = true; continue; }
+
+      const [q, r] = pixelToHex(p.x, p.y), key = q * 10000 + r;
+      let b = buckets.get(key); if (!b) buckets.set(key, b = { q, r, NOx: [], VOC: [], O3: [] });
+      b[p.kind].push(p);
+    }
+
+    // Photochemistry: NOx + VOC + sunlight → O₃
+    for (const b of buckets.values()) {
+      if (!b.NOx.length || !b.VOC.length) continue;
+      const [cx, cy] = hexCenter(b.q, b.r), sun = sunlight(cx, cy);
+      if (sun < 0.08) continue;
+      for (const n of b.NOx) {
+        if (!b.VOC.length) break;
+        if (Math.random() < PLUME.reactionRate * sun * 2) {
+          const v = b.VOC.pop(); v.dead = true;
+          n.kind = 'O3'; n.life = n.age + 500 + Math.random() * 400; b.O3.push(n);
+          if (flashes.length < 40) flashes.push({ x: n.x, y: n.y, age: 0 });
+        }
+      }
+    }
+
+    // Cell concentrations: decaying average of what passes through
+    for (const c of cells.values()) { c.NOx *= 0.95; c.VOC *= 0.95; c.O3 *= 0.95; }
+    for (const [key, b] of buckets) {
+      let c = cells.get(key); if (!c) cells.set(key, c = { q: b.q, r: b.r, NOx: 0, VOC: 0, O3: 0 });
+      c.NOx += b.NOx.length * 0.05; c.VOC += b.VOC.length * 0.05; c.O3 += b.O3.length * 0.05;
+    }
+    for (const [k, c] of cells) if (c.NOx + c.VOC + c.O3 < 0.01) cells.delete(k);
+
+    particles = particles.filter(p => !p.dead);
+    flashes = flashes.filter(f => ++f.age < 28);
+  }
+
+  // ── Drawing ──
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
+
+    // Sun
+    const sx = w * PLUME.sun.x, sy = h * PLUME.sun.y;
+    const glow = ctx.createRadialGradient(sx, sy, 0, sx, sy, w * 0.45);
+    glow.addColorStop(0, 'rgba(255,214,150,0.30)'); glow.addColorStop(0.12, 'rgba(248,198,112,0.14)');
+    glow.addColorStop(1, 'rgba(248,198,112,0)');
+    ctx.fillStyle = glow; ctx.fillRect(0, 0, w, h);
+    ctx.fillStyle = 'rgba(255,226,176,0.9)'; ctx.beginPath(); ctx.arc(sx, sy, 16, 0, 7); ctx.fill();
+    ctx.strokeStyle = 'rgba(255,226,176,0.18)'; ctx.lineWidth = 1;
+    for (let i = 0; i < 3; i++) { ctx.beginPath(); ctx.arc(sx, sy, 26 + i * 12 + (t * 20 % 12), 0, 7); ctx.stroke(); }
+
+    // Mesh cells tinted by concentration (colour = dominant species)
+    for (const c of cells.values()) {
+      const total = c.NOx + c.VOC + c.O3;
+      const kind = c.O3 >= c.NOx && c.O3 >= c.VOC ? 'O3' : c.NOx >= c.VOC ? 'NOx' : 'VOC';
+      const a = Math.min(0.13, total * 0.05);
+      if (a < 0.01) continue;
+      const [cx, cy] = hexCenter(c.q, c.r);
+      hexPath(ctx, cx, cy, R - 1);
+      ctx.fillStyle = rgba(C[kind], a); ctx.fill();
+    }
+
+    ctx.drawImage(staticLayer, 0, 0, w, h);
+
+    // Particles
+    ctx.globalCompositeOperation = 'lighter';
+    for (const p of particles) {
+      const fade = Math.min(1, p.age / 20, (p.life - p.age) / 80);
+      ctx.fillStyle = rgba(C[p.kind], (p.kind === 'O3' ? 0.85 : 0.6) * fade);
+      const sz = p.kind === 'O3' ? 2.2 : 1.6;
+      ctx.fillRect(p.x - sz / 2, p.y - sz / 2, sz, sz);
+    }
+    // Reaction flashes
+    for (const f of flashes) {
+      ctx.strokeStyle = rgba(C.O3, 0.5 * (1 - f.age / 28));
+      ctx.beginPath(); ctx.arc(f.x, f.y, 2 + f.age * 0.35, 0, 7); ctx.stroke();
+    }
+    ctx.globalCompositeOperation = 'source-over';
+
+    // Legend
+    if (w >= 760) {
+      ctx.font = '500 11px Inter, system-ui, sans-serif'; ctx.textBaseline = 'middle';
+      const parts = [['NOx', C.NOx], [' + ', null], ['VOC', C.VOC], [' + sunlight  →  ', null], ['O₃', C.O3]];
+      let x = w - 24 - parts.reduce((s, [txt, col]) => s + ctx.measureText(txt).width + (col ? 12 : 0), 0);
+      const y = h - 18;
+      for (const [txt, col] of parts) {
+        if (col) { ctx.fillStyle = rgba(col, 0.95); ctx.beginPath(); ctx.arc(x + 3, y, 3, 0, 7); ctx.fill(); x += 12; }
+        ctx.fillStyle = 'rgba(243,239,231,0.7)'; ctx.fillText(txt, x, y); x += ctx.measureText(txt).width;
+      }
+    }
+  }
+
+  function loop() { if (running) { step(); draw(); } requestAnimationFrame(loop); }
 
   resize();
   addEventListener('resize', () => { clearTimeout(resize.t); resize.t = setTimeout(resize, 150); });
-  if (still) { for (let i = 0; i < 160; i++) step(); return; }   // draw one static frame
-  // Pause when the hero is off-screen to save battery
+  hero.addEventListener('pointermove', e => {
+    const rect = hero.getBoundingClientRect();
+    windTarget = ((e.clientY - rect.top) / rect.height - 0.6) * 0.9;   // steer the wind
+  });
+  hero.addEventListener('pointerleave', () => { windTarget = -0.1; });
+
+  if (still) { for (let i = 0; i < 1400; i++) step(); draw(); return; }  // one still frame
+  for (let i = 0; i < 900; i++) step();                                   // start with a developed plume
   new IntersectionObserver(([e]) => { running = e.isIntersecting; }).observe(canvas);
   loop();
 })();

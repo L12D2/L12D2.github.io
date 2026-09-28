@@ -36,6 +36,7 @@
       {%- for l in p.links %}
       <a href="{{ l.url }}" class="btn" target="_blank" rel="noopener">{{ l.label }}</a>
       {%- endfor %}
+      <a href="{{ '/photos/' | relative_url }}" class="btn">Photos</a>
       {%- if p.cv_pdf %}
       <a href="{{ p.cv_pdf | relative_url }}" class="btn">Download CV (PDF)</a>
       {%- endif %}
@@ -70,6 +71,7 @@
       <a href="#honors">Honors</a>
       <a href="#service">Leadership &amp; Service</a>
       <a href="#more">Skills &amp; More</a>
+      <a href="{{ '/photos/' | relative_url }}">Photos</a>
     </nav>
     <button class="theme-toggle" type="button" aria-label="Toggle dark mode">
       <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9Z"/></svg>

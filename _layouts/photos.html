@@ -1,0 +1,37 @@
+<!doctype html>
+{%- assign p = site.data.profile -%}
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Photos · {{ p.name }}</title>
+  <meta name="description" content="Photos from {{ p.name }}'s fieldwork, travels, and milestones.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
+  <script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+</head>
+<body>
+  <header class="hero hero--small">
+    <div class="hero__inner">
+      <p class="hero__eyebrow"><a href="{{ '/' | relative_url }}">← {{ p.name }}</a></p>
+      <h1 class="hero__name">Photos</h1>
+    </div>
+  </header>
+
+  <main class="gallery">
+    {%- for photo in site.data.photos %}
+    <figure>
+      <a href="{{ '/assets/photos/' | append: photo.file | relative_url }}" target="_blank" rel="noopener">
+        <img src="{{ '/assets/photos/' | append: photo.file | relative_url }}" alt="{{ photo.caption }}" loading="lazy">
+      </a>
+      <figcaption>
+        <span>{{ photo.caption }}</span>
+        {% if photo.date %}<span class="meta">{{ photo.date }}</span>{% endif %}
+      </figcaption>
+    </figure>
+    {%- endfor %}
+  </main>
+</body>
+</html>
