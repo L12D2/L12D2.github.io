@@ -1,0 +1,48 @@
+# ─────────────────────────────────────────────────────────────
+#  PROFILE — the header of your site.
+#  Edit any line, commit, and the site updates in ~1 minute.
+#  Text fields accept Markdown: **bold**, *italic*, [link](url)
+# ─────────────────────────────────────────────────────────────
+
+name: Liam Thompson
+role: M.S. Student, Atmospheric Science
+affiliation: University of Utah
+location: Salt Lake City, Utah
+email: liam.thompson@utah.edu
+
+# Short badges shown under your name
+distinctions:
+  - NSF GRFP Fellow (2026–2031)
+  - Goldwater Scholar (2025)
+  - NOAA Hollings Scholar (2024)
+
+# A few sentences in your own voice. Shown at the top of the page.
+bio: >
+  I study the atmosphere where it meets people: urban air quality, aerosol
+  chemistry, and the weather and climate forces that shape energy, aviation,
+  and agriculture. My work spans high-resolution, convection-permitting
+  modeling, open-source model evaluation tools like MELODIES-MONET, and
+  communicating climate uncertainty to the decision makers who rely on it.
+
+research_interests:
+  - "**Atmospheric chemistry and aerosol composition** in urban areas"
+  - "**Economic impacts** of meteorological and climatological factors (e.g. aviation and agriculture)"
+  - "**Coupled atmosphere–ocean feedbacks** such as the El Niño–Southern Oscillation (ENSO)"
+  - "**High-resolution, convection-permitting modeling** for operational pollution and weather forecasting"
+  - "Understanding the **impacts of climate change** on societies"
+  - "**Enhancing teaching methods** and educational quality in STEM"
+
+links:
+  - label: Google Scholar
+    url: https://scholar.google.com/citations?user=wCdxrF4AAAAJ&hl=en
+  - label: GitHub
+    url: https://github.com/L12D2
+  - label: LinkedIn
+    url: https://www.linkedin.com/in/liamthom
+
+# Optional: put a PDF in the /assets folder and set its path here, e.g.
+# cv_pdf: /assets/Thompson_CV.pdf   (leave blank to hide the button)
+cv_pdf:
+
+# Month/Year shown in the footer as "last updated"
+updated: September 2026

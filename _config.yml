@@ -1,0 +1,11 @@
+# Site-wide settings. You rarely need to change this file.
+title: Liam Thompson
+description: Atmospheric scientist — urban air quality, convection-permitting modeling, and climate communication.
+url: https://l12d2.github.io
+baseurl: ""
+
+# How your name appears in author lists (it gets bolded automatically)
+me: Thompson, L.
+me_alt: Thompson, L. C.
+
+exclude: [README.md, HOW-TO-UPDATE.md, Gemfile, Gemfile.lock, vendor]

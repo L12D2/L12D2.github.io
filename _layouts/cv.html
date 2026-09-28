@@ -1,0 +1,287 @@
+<!doctype html>
+{%- assign p = site.data.profile -%}
+{%- comment -%} Bold every spelling of my name listed in _config.yml → `me` {%- endcomment -%}
+{%- capture me_html -%}<strong class="me">{{ site.me }}</strong>{%- endcapture -%}
+{%- assign me_full = site.me_alt | default: "@@none@@" -%}
+{%- capture me_full_html -%}<strong class="me">{{ me_full }}</strong>{%- endcapture -%}
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ p.name }} · {{ p.role }}</title>
+  <meta name="description" content="{{ site.description }}">
+  <meta property="og:title" content="{{ p.name }}">
+  <meta property="og:description" content="{{ site.description }}">
+  <meta property="og:type" content="profile">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='15' fill='%23163246'/><path d='M7 18c4-5 8 3 12-2s5-3 6-2' stroke='%23f2b872' stroke-width='2.4' fill='none' stroke-linecap='round'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
+  <script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+</head>
+<body>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<header class="hero">
+  <canvas class="hero__flow" aria-hidden="true"></canvas>
+  <div class="hero__inner">
+    <p class="hero__eyebrow">{{ p.role }} · {{ p.affiliation }}</p>
+    <h1 class="hero__name">{{ p.name }}</h1>
+    <ul class="hero__badges">
+      {%- for d in p.distinctions %}<li>{{ d }}</li>{% endfor -%}
+    </ul>
+    <nav class="hero__links" aria-label="Profiles">
+      <a href="mailto:{{ p.email }}" class="btn btn--solid">{{ p.email }}</a>
+      {%- for l in p.links %}
+      <a href="{{ l.url }}" class="btn" target="_blank" rel="noopener">{{ l.label }}</a>
+      {%- endfor %}
+      {%- if p.cv_pdf %}
+      <a href="{{ p.cv_pdf | relative_url }}" class="btn">Download CV (PDF)</a>
+      {%- endif %}
+    </nav>
+
+    {%- assign lead_pubs = site.data.publications | where: "lead", true | where: "type", "article" -%}
+    {%- assign grant_total = 0 -%}
+    {%- for g in site.data.grants -%}
+      {%- assign amt = g.amount | remove: "$" | remove: "," | plus: 0 -%}
+      {%- assign grant_total = grant_total | plus: amt -%}
+    {%- endfor -%}
+    {%- assign k = grant_total | divided_by: 1000 -%}
+    <dl class="hero__stats">
+      <div><dt>First-author papers</dt><dd>{{ lead_pubs.size }}</dd></div>
+      <div><dt>Presentations</dt><dd>{{ site.data.presentations.size }}</dd></div>
+      <div><dt>Research funding</dt><dd>${{ k }}k</dd></div>
+      <div><dt>Honors &amp; awards</dt><dd>{{ site.data.honors.size }}</dd></div>
+    </dl>
+  </div>
+</header>
+
+<div class="page">
+  <!-- ═══════════════ SIDE NAV ═══════════════ -->
+  <aside class="toc" aria-label="Sections">
+    <nav>
+      <a href="#about">About</a>
+      <a href="#education">Education</a>
+      <a href="#experience">Experience</a>
+      <a href="#publications">Publications</a>
+      <a href="#presentations">Presentations</a>
+      <a href="#funding">Funding</a>
+      <a href="#honors">Honors</a>
+      <a href="#service">Leadership &amp; Service</a>
+      <a href="#more">Skills &amp; More</a>
+    </nav>
+    <button class="theme-toggle" type="button" aria-label="Toggle dark mode">
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9Z"/></svg>
+      <span>Theme</span>
+    </button>
+  </aside>
+
+  <main>
+    <!-- ABOUT -->
+    <section id="about" class="section">
+      <h2 class="section__title"><span>01</span>About</h2>
+      <p class="lede">{{ p.bio | strip }}</p>
+      <h3 class="sub">Research interests</h3>
+      <ul class="interests">
+        {%- for i in p.research_interests %}
+        <li>{{ i | markdownify | remove: '<p>' | remove: '</p>' | strip }}</li>
+        {%- endfor %}
+      </ul>
+    </section>
+
+    <!-- EDUCATION -->
+    <section id="education" class="section">
+      <h2 class="section__title"><span>02</span>Education</h2>
+      <div class="edu">
+        {%- for e in site.data.education %}{% unless e.abroad %}
+        <article class="edu__item">
+          <div class="meta">{{ e.dates }}</div>
+          <h3>{{ e.school }}</h3>
+          <p class="muted">{{ e.place }}{% if e.gpa %} · GPA {{ e.gpa }}{% endif %}</p>
+          <ul class="plain">
+            {%- for d in e.degrees %}<li>{{ d | markdownify | remove: '<p>' | remove: '</p>' | strip }}</li>{% endfor -%}
+          </ul>
+          {%- if e.note %}<p class="note">{{ e.note | markdownify | remove: '<p>' | remove: '</p>' | strip }}</p>{% endif %}
+        </article>
+        {%- endunless %}{% endfor %}
+      </div>
+      <h3 class="sub">Study abroad</h3>
+      <ul class="rows">
+        {%- for e in site.data.education %}{% if e.abroad %}
+        <li><span>{{ e.school }} <em class="muted">— {{ e.place }}</em></span><span class="meta">{{ e.dates }}</span></li>
+        {%- endif %}{% endfor %}
+      </ul>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section id="experience" class="section">
+      <h2 class="section__title"><span>03</span>Experience</h2>
+      <ol class="timeline">
+        {%- for x in site.data.experience %}
+        <li class="timeline__item">
+          <div class="meta">{{ x.dates }}</div>
+          <h3>{{ x.title }}</h3>
+          <p class="org">{{ x.org }}{% if x.unit %} · {{ x.unit }}{% endif %}</p>
+          {%- if x.tags %}<p class="tags">{% for t in x.tags %}<span>{{ t }}</span>{% endfor %}</p>{% endif %}
+          <ul>
+            {%- for h in x.highlights %}<li>{{ h }}</li>{% endfor -%}
+          </ul>
+          {%- if x.details %}
+          <details>
+            <summary>More</summary>
+            <ul>{% for d in x.details %}<li>{{ d }}</li>{% endfor %}</ul>
+          </details>
+          {%- endif %}
+        </li>
+        {%- endfor %}
+      </ol>
+    </section>
+
+    <!-- PUBLICATIONS -->
+    <section id="publications" class="section">
+      <h2 class="section__title"><span>04</span>Publications</h2>
+      <ol class="pubs">
+        {%- for pub in site.data.publications %}
+        <li class="pub">
+          <div class="pub__year">{{ pub.year }}</div>
+          <div>
+            <p class="pub__kind">
+              {%- case pub.type -%}
+                {%- when "article" -%}Journal article
+                {%- when "software" -%}Software
+                {%- when "case-study" -%}Case study
+                {%- else -%}{{ pub.type }}
+              {%- endcase -%}
+              {%- if pub.lead %} <span class="pill">Lead author</span>{% endif -%}
+            </p>
+            <h3 class="pub__title">{% if pub.url %}<a href="{{ pub.url }}" target="_blank" rel="noopener">{{ pub.title }}</a>{% else %}{{ pub.title }}{% endif %}</h3>
+            <p class="authors">{{ pub.authors | replace: me_full, "@@ME2@@" | replace: site.me, me_html | replace: "@@ME2@@", me_full_html }}</p>
+            <p class="venue">{{ pub.venue | markdownify | remove: '<p>' | remove: '</p>' | strip }}</p>
+          </div>
+        </li>
+        {%- endfor %}
+      </ol>
+    </section>
+
+    <!-- PRESENTATIONS -->
+    <section id="presentations" class="section">
+      <h2 class="section__title"><span>05</span>Conferences &amp; Presentations</h2>
+      <div class="filters" role="group" aria-label="Filter presentations">
+        <button type="button" data-filter="all" aria-pressed="true">All</button>
+        <button type="button" data-filter="oral" aria-pressed="false">Oral</button>
+        <button type="button" data-filter="poster" aria-pressed="false">Poster</button>
+        <button type="button" data-filter="award" aria-pressed="false">Awarded</button>
+      </div>
+      <ol class="talks" data-collapsible>
+        {%- for t in site.data.presentations %}
+        <li class="talk" data-format="{{ t.format }}"{% if t.award %} data-award{% endif %}>
+          <div class="meta">{{ t.date }}</div>
+          <div>
+            <h3 class="talk__title">{{ t.title }}{% if t.award %} <span class="ribbon" title="Presentation award">Award</span>{% endif %}</h3>
+            <p class="authors">{{ t.authors | replace: me_full, "@@ME2@@" | replace: site.me, me_html | replace: "@@ME2@@", me_full_html }}</p>
+            <p class="muted small">
+              <span class="fmt fmt--{{ t.format }}">{{ t.format | capitalize }}</span>
+              {% if t.presenter == false %}<span class="fmt">Co-author</span>{% endif %}
+              {{ t.event }} · {{ t.place }}
+            </p>
+          </div>
+        </li>
+        {%- endfor %}
+      </ol>
+      <button type="button" class="show-more" hidden>Show all presentations</button>
+
+      <h3 class="sub">Poster awards</h3>
+      <ul class="rows">
+        {%- for a in site.data.poster_awards %}<li><span>{{ a.name }}</span><span class="meta">{{ a.year }}</span></li>{% endfor -%}
+      </ul>
+    </section>
+
+    <!-- FUNDING -->
+    <section id="funding" class="section">
+      <h2 class="section__title"><span>06</span>Grants &amp; Awarded Proposals</h2>
+      <ul class="grants">
+        {%- for g in site.data.grants %}
+        <li>
+          <div class="grants__amt">{{ g.amount }}</div>
+          <div>
+            <h3>{{ g.name }}</h3>
+            <p class="muted small">{{ g.purpose }}</p>
+          </div>
+          <div class="meta">{{ g.year }}</div>
+        </li>
+        {%- endfor %}
+      </ul>
+    </section>
+
+    <!-- HONORS -->
+    <section id="honors" class="section">
+      <h2 class="section__title"><span>07</span>Honors &amp; Awards</h2>
+      <div class="featured">
+        {%- for h in site.data.honors %}{% if h.featured %}
+        <div class="featured__card"><span class="meta">{{ h.year }}</span><strong>{{ h.name }}</strong></div>
+        {%- endif %}{% endfor %}
+      </div>
+      <ul class="rows rows--cols">
+        {%- for h in site.data.honors %}{% unless h.featured %}
+        <li><span>{{ h.name }}</span><span class="meta">{{ h.year }}</span></li>
+        {%- endunless %}{% endfor %}
+      </ul>
+    </section>
+
+    <!-- LEADERSHIP & SERVICE -->
+    <section id="service" class="section">
+      <h2 class="section__title"><span>08</span>Leadership &amp; Service</h2>
+      {%- assign groups = site.data.service | group_by: "group" -%}
+      {%- for grp in groups %}
+      <h3 class="sub">{{ grp.name }}</h3>
+      <div class="cards">
+        {%- for s in grp.items %}
+        <article class="card">
+          <div class="meta">{{ s.dates }}</div>
+          <h4>{% if s.title %}{{ s.title }}{% else %}{{ s.org }}{% endif %}</h4>
+          {%- if s.title %}<p class="org">{{ s.org }}</p>{% endif %}
+          {%- if s.points %}<ul>{% for pt in s.points %}<li>{{ pt | markdownify | remove: '<p>' | remove: '</p>' | strip }}</li>{% endfor %}</ul>{% endif %}
+          {%- if s.roles %}
+          <ol class="roles">
+            {%- for r in s.roles %}
+            <li>
+              <div class="roles__head"><strong>{{ r.title }}</strong><span class="meta">{{ r.dates }}</span></div>
+              {%- if r.points %}<ul>{% for pt in r.points %}<li>{{ pt }}</li>{% endfor %}</ul>{% endif %}
+            </li>
+            {%- endfor %}
+          </ol>
+          {%- endif %}
+        </article>
+        {%- endfor %}
+      </div>
+      {%- endfor %}
+    </section>
+
+    <!-- SKILLS, AFFILIATIONS, VOLUNTEER -->
+    <section id="more" class="section">
+      <h2 class="section__title"><span>09</span>Skills &amp; More</h2>
+      <h3 class="sub">Technical</h3>
+      <p class="chips">{% for s in site.data.skills.technical %}<span>{{ s }}</span>{% endfor %}</p>
+      <h3 class="sub">Training &amp; certifications</h3>
+      <p class="chips chips--quiet">{% for s in site.data.skills.training %}<span>{{ s }}</span>{% endfor %}</p>
+      <h3 class="sub">Professional affiliations</h3>
+      <ul class="rows">
+        {%- for a in site.data.affiliations %}<li><span>{{ a.name }}</span><span class="meta">{{ a.dates }}</span></li>{% endfor -%}
+      </ul>
+      <h3 class="sub">Volunteer</h3>
+      <ul class="rows">
+        {%- for v in site.data.volunteer %}<li><span>{{ v.name }}</span><span class="meta">{{ v.date }}</span></li>{% endfor -%}
+      </ul>
+    </section>
+
+    <footer class="footer">
+      <p>{{ p.name }} · {{ p.location }} · Last updated {{ p.updated }}</p>
+      <p><a href="#top" class="to-top">Back to top ↑</a></p>
+    </footer>
+  </main>
+</div>
+
+<script src="{{ '/assets/js/site.js' | relative_url }}" defer></script>
+</body>
+</html>

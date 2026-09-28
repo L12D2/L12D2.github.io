@@ -1,0 +1,37 @@
+# EDUCATION — newest first. Copy a block to add a new entry.
+
+- school: University of Utah
+  place: Salt Lake City, Utah
+  dates: August 2026 – Present
+  degrees:
+    - "**M.S.**, Atmospheric Science"
+
+- school: University of Oklahoma
+  place: Norman, Oklahoma
+  dates: August 2022 – May 2026
+  gpa: 3.91 / 4.0
+  degrees:
+    - "**B.S.**, Meteorology"
+    - "**B.S.**, Environmental Sustainability"
+    - "**Undergraduate Certificate**, Sustainable Energy Systems"
+
+- school: University of Alaska Fairbanks
+  place: Fairbanks, Alaska
+  dates: May 2020 – May 2022
+  gpa: 4.0 / 4.0
+  degrees:
+    - "**A.A.**, General Studies"
+  note: Graduated *Summa Cum Laude*
+
+# Study abroad
+- school: Ming Chuan University
+  place: Taipei, Taiwan
+  dates: December 2024 – January 2025
+  gpa: 4.0 / 4.0
+  abroad: true
+
+- school: University of Oklahoma Arezzo
+  place: Arezzo, Italy
+  dates: June 2023
+  gpa: 4.0 / 4.0
+  abroad: true

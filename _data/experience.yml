@@ -1,0 +1,118 @@
+# EXPERIENCE — newest first.
+# `tags` are optional little labels shown next to the entry.
+# `highlights` are always visible; `details` are tucked behind "More".
+
+- org: NSF National Center for Atmospheric Research (NCAR)
+  unit: Computational and Information Systems Laboratory (CISL)
+  title: SIParCS Intern — Summer Internships in Parallel Computational Science
+  dates: May 2026 – August 2026
+  tags: [Research, Software]
+  highlights:
+    - Developed new capabilities for MELODIES-MONET, a Python atmospheric chemistry model evaluation toolkit, to support unstructured model grids such as MPAS
+    - Added conservative regridding of satellite data onto unstructured model grids
+  details:
+    - Supported ASIA-AQ analysis by pairing Thailand and Philippines surface meteorological data to meteorologically nudged model runs over Southeast Asia
+    - Supported proposed field campaigns over Atlanta, Georgia through new code development
+
+- org: Skydweller Aero
+  title: Ultra-Endurance, Perpetual Flight Meteorologist
+  dates: April 2026 – May 2026
+  tags: [Operations, Aviation]
+  highlights:
+    - Produced day-1 through day-12+ regional and global forecasts supporting solar-powered aircraft operations
+    - Forecasts identified daily solar-charging flight routes and turbulence hotspots, and informed takeoff and landing decisions
+  details:
+    - Trained pilots on the risks of icing, thunderstorms, jet streams, and more to their aircraft operations
+    - Taught key meteorological concepts applicable to safe aviation operations
+
+- org: Mercuria
+  title: Renewable Energy Meteorologist Intern
+  dates: February 2026 – June 2026
+  tags: [Operations, Energy]
+  highlights:
+    - Produced short- to medium-range solar, wind speed, and temperature forecasts across ERCOT
+    - Forecasts helped maintain stability and fairness of daily electricity prices for ERCOT customers
+  details:
+    - Operational experience provided insight into optimal placement of future solar and wind farms across Texas and the Southern Great Plains
+
+- org: NOAA Chemical Sciences Laboratory (CSL)
+  title: Code Developer Intern
+  dates: May 2025 – August 2025
+  tags: [Research, Software]
+  highlights:
+    - Led development and integration of MEET, a Python meteorological evaluation toolkit, within MELODIES-MONET
+    - Code and manuscript co-author on version 1 of the MELODIES-MONET toolkit
+  details:
+    - Evaluated and contributed to the development of the Unified Forecast System with Chemistry (UFS-Chem)
+    - Analyzed the meteorological capabilities of the WRF-Chem model
+    - Collaborated with researchers in Argentina, NCAR ACOM, CIRES, NOAA ARL, and more
+
+- org: U.S. Environmental Protection Agency (EPA)
+  title: Radiation Protection Division Research Intern
+  dates: June 2024 – August 2024
+  tags: [Research, Policy]
+  highlights:
+    - Researched the impact of precipitation on local radiation levels using RadNet, EPA's nationwide near-real-time radiation monitoring system
+    - Built Python tools and a web scraper to analyze RadNet data against NOAA NCEI meteorological data
+  details:
+    - Developed tools to help the public distinguish normal from non-normal radiation, for routine engagement and emergencies
+    - Supported communication with Tribal Nations at a Region 6 Regional Tribal Operations Committee (RTOC) meeting
+    - Supported the Indoor Environments Tribal Air Quality Program through internal agency engagement
+
+- org: Sustainable Urban Futures Lab (SURF), University of Oklahoma
+  title: Research Assistant
+  dates: January 2024 – May 2026
+  tags: [Research]
+  highlights:
+    - Lead author on an urban energy emissions review and an across-scales urban scaling analysis of building energy demand
+    - Evaluated the 40-year, 4-km CONUS404 simulation in urban environments against hourly in-situ observations — one of the first evaluations of its type
+  details:
+    - Identified climatological deviations from urban scaling laws to understand why some cities deviate from linearity
+    - Evaluated CONUS404 temperature, dewpoint, and wind speed across spatial and temporal scales, supporting the NCAR CONUS404 development team
+    - Wrote and was awarded a proposal investigating the influence of severe convective weather on ozone pollution in Oklahoma City
+    - Presenting author at regional, national, and international conferences
+
+- org: South Central Climate Adaptation Science Center (SC CASC)
+  title: Research Assistant
+  dates: May 2023 – May 2026
+  tags: [Research, Science Communication]
+  highlights:
+    - Analyzed gridded observation products (Daymet, PRISM, nClimGrid, Livneh, GridMet) to understand how training data shape downscaled climate projections
+    - Lead author on a literature review of communicating uncertainty in global climate projections, and on four peer-reviewed case studies
+  details:
+    - Informed modelers of bias impacts on downscaling, especially in complex terrain
+    - Supported stakeholders using the South Central Climate Projections Evaluation Project (C-PrEP)
+    - Worked with the Communicating Uncertainty CoP to distill climate information for agencies across New Mexico, Texas, Oklahoma, and Louisiana
+    - Analyzed stakeholder responses from the SC CASC Understanding Uncertainty Partners Survey
+    - Interviewed Federal land managers (USFS, USACE) and researchers at NC State, Oklahoma State, Georgia, and Arizona
+    - Collaborated with USFWS, USGS, and the Bureau of Reclamation on case studies for managers, researchers, and Tribal Nations
+
+- org: National Weather Center
+  title: Tour Guide
+  dates: November 2022 – August 2023
+  tags: [Outreach]
+  highlights:
+    - Recruited prospective students and led public and professional tours showing how daily forecasts, convective outlooks, and NWS warnings are produced
+  details:
+    - Participated in outreach events raising awareness of meteorology careers in government and industry
+
+- org: Cooperative Institute for Severe and High-Impact Weather Research and Operations (CIWRO)
+  title: Data Analyst
+  dates: September 2022 – May 2023
+  tags: [Research]
+  highlights:
+    - Monitored daily operations of ARM instruments across the Southern Great Plains, East Coast, California, and Alaska
+    - Filed data quality problem reports and weekly data quality reports to protect measurement integrity
+  details:
+    - Participated in the EPCAPE campaign, submitting tri-weekly reports during intensive observational periods
+    - Participated in the 2021–2022 TRACER campaign
+
+- org: North Star Tutors
+  title: Mathematics Tutor
+  dates: November 2020 – May 2024
+  tags: [Teaching]
+  highlights:
+    - Tutored grades 3 through college across the Fairbanks North Star Borough — AP Calculus, precalculus, trigonometry, algebra, geometry, and chemistry
+  details:
+    - Provided a primary educational supplement during the COVID-19 pandemic, keeping students at or above grade level
+    - Built confidence in students of all backgrounds during a period of extreme uncertainty

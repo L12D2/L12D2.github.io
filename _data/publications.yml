@@ -1,0 +1,67 @@
+# PUBLICATIONS — newest first.
+# Your name is bolded automatically (see `me` in _config.yml).
+# type: article | software | case-study
+# lead: true  → marks you as lead author
+
+- authors: Thompson, L., Wang, C., & Lu, M.
+  year: 2026
+  title: Contrasting patterns in urban energy and emission scaling
+  venue: "*Environmental Research Letters*, 21(11), 114016"
+  url: https://iopscience.iop.org/article/10.1088/1748-9326/ae71ed/meta
+  type: article
+  lead: true
+
+- authors: Thompson, L., Wootten, A. M., Corporal-Lodangco, I. L., Nielsen-Gammon, J., & Trepanier, J.
+  year: 2025
+  title: "A Review: Communicating Uncertainty within the Global Climate Projections"
+  venue: "*Weather, Climate, and Society*"
+  url: https://doi.org/10.1175/WCAS-D-25-0039.1
+  type: article
+  lead: true
+
+- authors: Thompson, L., Wang, C., He, C., Lin, T. S., Liu, C., & Dudhia, J.
+  year: 2025
+  title: Assessment of convection-permitting hydroclimate modeling in urban areas across the contiguous United States
+  venue: "*Urban Climate*, 61, 102375"
+  url: https://doi.org/10.1016/j.uclim.2025.102375
+  type: article
+  lead: true
+
+- authors: Moon, Z., Lichtig, P., Fillmore, D., Schwantes, B., Harkins, C., Tang, B., Bruckner, M., Rasool, Q. Z., Buchholz, R., He, J., Baker, B., Jo, D., Schnell, J., Kozi, B., Arnold, M., Emmons, L., Thompson, L., & Contributors
+  year: 2025
+  title: "NCAR/MELODIES-MONET: v1.0"
+  venue: Software, Zenodo
+  url: https://doi.org/10.5281/zenodo.15776659
+  type: software
+
+- authors: Thompson, L. C., & Moeser, C. D.
+  year: 2024
+  title: The Effects of Wildfire on Snow Water Resources Under Multiple Climate Conditions
+  venue: Conservation and Adaptation Resources Toolbox (CART)
+  url: https://www.fws.gov/project/effects-wildfire-snow-water-resources-under-multiple-climate-conditions
+  type: case-study
+  lead: true
+
+- authors: Thompson, L. C.
+  year: 2024
+  title: Using Regional Soil Moisture to Map Wildfire Probability in the Rio Grande and Red River Watersheds
+  venue: Conservation and Adaptation Resources Toolbox (CART)
+  url: https://www.fws.gov/project/using-regional-soil-moisture-map-wildfire-probability
+  type: case-study
+  lead: true
+
+- authors: Thompson, L. C., Léger, A., & Jewell, K.
+  year: 2024
+  title: Wood for Life, a Collaborative Partnership to Provide Wood to the Navajo Nation and Hopi Tribe
+  venue: Conservation and Adaptation Resources Toolbox (CART)
+  url: https://arcg.is/0bX4PD
+  type: case-study
+  lead: true
+
+- authors: Thompson, L. C.
+  year: 2023
+  title: Rivercane Recovery to Support Tribal Cultural Practices
+  venue: Conservation and Adaptation Resources Toolbox (CART)
+  url: https://arcg.is/10Omvi
+  type: case-study
+  lead: true

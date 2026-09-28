@@ -1,0 +1,195 @@
+# CONFERENCES & PRESENTATIONS — newest first.
+# format: oral | poster
+# presenter: true → you presented it (default true; set false for co-author only)
+# award: true     → won a presentation award (shown with a ribbon)
+
+- authors: Thompson, L., Gaubert, B., Eroglu, O., & MELODIES MONET Development Team
+  date: July 2026
+  title: A Generalized Framework for the Evaluation and Comparison of Atmospheric Chemistry Models with Observations
+  event: 2026 SIParCS Highlight
+  place: Boulder, Colorado
+  format: oral
+
+- authors: Thompson, L., Gaubert, B., Emmons, L., Acdan, J., Schwantes, B., Baker, B., Lichtig, P., Tang, W., Hao, P., Eroglu, O., & MELODIES MONET Development Team
+  date: July 2026
+  title: A Generalized Framework for the Evaluation and Comparison of Atmospheric Chemistry Models with Observations
+  event: 2026 NSF NCAR, UCAR & UCP Summer Student Research Poster Symposium
+  place: Boulder, Colorado
+  format: poster
+
+- authors: Thompson, L., & Wang, C.
+  date: April 2026
+  title: "Climate as a Driver of Long-Term Urban Energy Scaling: Evidence from 277 U.S. Cities"
+  event: Department of Geography and Environmental Sustainability Senior Capstone Highlight
+  place: Norman, Oklahoma
+  format: poster
+
+- authors: Thompson, L., Schwantes, R., Bruckner, M., Lichtig, P., Hsu, C., & McDonald, B.
+  date: January 2026
+  title: Developing an Open Source Meteorological Evaluation Toolkit within MELODIES-MONET
+  event: American Meteorological Society Annual Meeting
+  place: Houston, Texas
+  format: oral
+
+- authors: Thompson, L., Schwantes, R., Bruckner, M., Lichtig, P., Hsu, C., & McDonald, B.
+  date: January 2026
+  title: The Open Source Meteorological Evaluation Toolkit within MELODIES-MONET
+  event: American Meteorological Society Annual Meeting
+  place: Houston, Texas
+  format: poster
+
+- authors: Bruckner, M., Lyu, C., He, J., Schwantes, R. H., Thompson, L., Zhang, L., Baker, B., Horowitz, L., Naik, V., Moon, Z., Grell, G., Ahmadov, R., Schnell, J., Wang, S., Negron, A. G., Peischl, J., Rollins, A., Robinson, M. A., & McDonald, B.
+  date: January 2026
+  title: "Influence of Smoke Emission Coefficients on Global Air Quality Simulations: An Application of UFS-Chem"
+  event: American Meteorological Society Annual Meeting
+  place: Houston, Texas
+  format: oral
+  presenter: false
+
+- authors: Preston, B., Douglas, J., Thompson, L., & Stroberg, E.
+  date: January 2026
+  title: Analyzing moisture variables for added accuracy in hail forecasting
+  event: AMS Annual Student Conference
+  place: Houston, Texas
+  format: poster
+
+- authors: Thompson, L., Delconte, C., Krautbauer, M. K., Scarberry, K., Berry, C. G., Zondlo, A., Phipps, W., Douglas, J. C., & Moreno, J.
+  date: January 2026
+  title: "Speaking the Digital Language: Weather Education for a Modern Audience"
+  event: AMS Annual Student Conference
+  place: Houston, Texas
+  format: poster
+  presenter: false
+
+- authors: Thompson, L., Schwantes, R., Bruckner, M., Lichtig, P., Hsu, C., & McDonald, B.
+  date: December 2025
+  title: Developing an Open Source Meteorological Evaluation Toolkit within MELODIES-MONET
+  event: American Geophysical Union Annual Meeting
+  place: New Orleans, Louisiana
+  format: poster
+
+- authors: Thompson, L., Schwantes, R., Bruckner, M., Lichtig, P., Hsu, C., & McDonald, B.
+  date: December 2025
+  title: Meteorological Assessment of the Unified Forecast System with Chemistry (UFS-Chem) using an Open-Source Model Evaluation Toolkit
+  event: American Geophysical Union Annual Meeting
+  place: New Orleans, Louisiana
+  format: poster
+
+- authors: Thompson, L., Schwantes, R., Bruckner, M., Lichtig, P., Hsu, C., & McDonald, B.
+  date: October 2025
+  title: An Open-Source Model Evaluation of the Unified Forecast System with Chemistry
+  event: Gulf Coast Undergraduate Research Symposium (GCURS)
+  place: Houston, Texas
+  format: oral
+
+- authors: Bruckner, M., He, J., Lyu, C., Schwantes, R. H., Thompson, L., Zhang, L., Baker, B., Horowitz, L., Naik, V., Moon, Z., Grell, G., Ahmadov, R., Schnell, J., Wang, S., Gorchov Negron, A., McDonald, B., & AEROMMA Science Team
+  date: September 2025
+  title: Assessing biomass burning emissions in UFS-Chem version 1 during the 2023 AGES+ field campaign
+  event: Unifying Innovations in Forecasting Capabilities Workshop (UIFCW25)
+  place: Boulder, Colorado
+  format: poster
+  presenter: false
+
+- authors: Thompson, L., Schwantes, R., Bruckner, M., Lichtig, P., Hsu, C., McDonald, B., & MELODIES-MONET Development Team
+  date: August 2025
+  title: Across-Scales Meteorological Evaluation of the Unified Forecast System with Chemistry (UFS-Chem) using MELODIES-MONET
+  event: Ernest F. Hollings Undergraduate Scholarship Symposium
+  place: Silver Spring, Maryland
+  format: poster
+
+- authors: Thompson, L., & Wang, C.
+  date: April 2025
+  title: Evaluating a Convection Permitting Simulation in Urban Areas across the Continental U.S.
+  event: Undergraduate Research Day
+  place: Norman, Oklahoma
+  format: poster
+  award: true
+
+- authors: Thompson, L., & Wang, C.
+  date: April 2025
+  title: Understanding the Influence of Convective Weather on Ozone Pollution in Oklahoma City, OK
+  event: Undergraduate Research Day
+  place: Norman, Oklahoma
+  format: poster
+  award: true
+
+- authors: Thompson, L., Wang, E., Montecalvo, D., & Snead, K.
+  date: January 2025
+  title: "Precipitation to Radiation: Understanding and Analyzing the Impact of Precipitation on Background Radiation Across the United States"
+  event: AMS Annual Student Conference
+  place: New Orleans, Louisiana
+  format: poster
+
+- authors: Thompson, L., & Wang, C.
+  date: January 2025
+  title: Assessing the Performance of a Convection-Permitting Regional Hydroclimate Simulation in Urban Areas across the Continental United States
+  event: American Meteorological Society Annual Meeting
+  place: New Orleans, Louisiana
+  format: poster
+  award: true
+
+- authors: Thompson, L.
+  date: December 2025
+  title: "University in America: The University of Oklahoma"
+  event: Presentation to Taiwanese high school students
+  place: Taipei, Taiwan
+  format: oral
+
+- authors: Thompson, L., & Wang, C.
+  date: December 2024
+  title: Hydrometeorological evaluation of a continental-scale convection-permitting simulation across urban environments
+  event: American Geophysical Union Annual Meeting
+  place: Washington, D.C.
+  format: oral
+
+- authors: Thompson, L., & Wang, C.
+  date: October 2024
+  title: A Long-Term Regional Assessment of the CONUS404 Bulk Parameterization in Urban Areas
+  event: University of Oklahoma GIS Day
+  place: Norman, Oklahoma
+  format: poster
+  award: true
+
+- authors: Thompson, L., & Wang, C.
+  date: August 2024
+  title: Evaluating the Hydrometeorological Performance of CONUS404 in Urban Environments
+  event: Model evaluation briefing to the NCAR CONUS404 R&D team
+  place: Remote (Norman, OK → Boulder, CO)
+  format: oral
+
+- authors: Thompson, L.
+  date: August 2024
+  title: From Rainfall to Radiation
+  event: Final research presentation to EPA's Radiation Protection Division
+  place: Remote (Norman, OK → Washington, D.C.)
+  format: oral
+
+- authors: Montecalvo, D., Wang, E., & Thompson, L.
+  date: July 2024
+  title: EPA's Radiological Emergency Response Capabilities
+  event: Regional Tribal Operations Committee (RTOC) Meeting
+  place: Albuquerque, New Mexico
+  format: oral
+  presenter: false
+
+- authors: Thompson, L.
+  date: June 2024
+  title: "Introduction to Research: A Guide to Learning from and Embracing your Mistakes"
+  event: National Weather Center REU Program
+  place: Norman, Oklahoma
+  format: oral
+
+- authors: Thompson, L.
+  date: January 2024
+  title: Understanding the Consumer Awareness of Increasing Coffee Prices in Correspondence with Extreme El Niño Southern Oscillation Events
+  event: AMS Annual Student Conference
+  place: Baltimore, Maryland
+  format: poster
+
+- authors: Carter, J., Kraker, H., & Thompson, L.
+  date: November 2023
+  title: The Conservation and Adaptation Resources Toolbox (CART)
+  event: South-Central Climate Adaptation Science Center Fall Science Meeting
+  place: Lubbock, Texas
+  format: poster
+  presenter: false
