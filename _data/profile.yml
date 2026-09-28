@@ -18,9 +18,9 @@ distinctions:
 
 # A few sentences in your own voice. Shown at the top of the page.
 bio: >
-  I study the atmosphere where it meets people: urban air quality, aerosol
-  chemistry, and the weather and climate forces that shape energy, aviation,
-  and agriculture. My work spans high-resolution, convection-permitting
+  Hi! I am Liam. I study the atmosphere where it meets people. This includes understanding 
+  urban air quality, atmospheric chemistry, and better understanding the weather and climate forcings that shape energy, 
+  aviation, and agriculture. My work spans high-resolution, convection-permitting
   modeling, open-source model evaluation tools like MELODIES-MONET, and
   communicating climate uncertainty to the decision makers who rely on it.
 
@@ -39,10 +39,8 @@ links:
     url: https://github.com/L12D2
   - label: LinkedIn
     url: https://www.linkedin.com/in/liamthom
-
-# Optional: put a PDF in the /assets folder and set its path here, e.g.
+    
 # cv_pdf: /assets/Thompson_CV.pdf   (leave blank to hide the button)
-cv_pdf:
-
+cv_pdf: /assets/month_year_cv_lt.pdf
 # Month/Year shown in the footer as "last updated"
 updated: September 2026
