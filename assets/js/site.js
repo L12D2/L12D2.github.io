@@ -17,9 +17,9 @@ const PLUME = {
   reactionRate: 0.035,            // chance per frame a sunlit NOx+VOC pair reacts
   maxParticles: 750,
   colors: {                       // r, g, b
-    NOx: [236, 128, 140],         // rose
-    VOC: [128, 214, 172],         // mint
-    O3:  [248, 198, 112],         // gold
+    NOx: [140, 182, 238],         // sky
+    VOC: [157, 212, 49],          // lime
+    O3:  [226, 218, 120],         // khaki gold
   },
 };
 
@@ -69,7 +69,7 @@ const PLUME = {
     s.setTransform(dpr, 0, 0, dpr, 0, 0);
 
     // Mesh
-    s.strokeStyle = 'rgba(190,215,235,0.055)'; s.lineWidth = 1;
+    s.strokeStyle = 'rgba(220,215,245,0.06)'; s.lineWidth = 1;
     const rows = Math.ceil(h / (R * 1.5)) + 1, cols = Math.ceil(w / (R * SQ3)) + 2;
     for (let r = -1; r <= rows; r++) for (let c = -1; c <= cols; c++) {
       const [cx, cy] = hexCenter(c - Math.floor(r / 2), r);
@@ -83,21 +83,21 @@ const PLUME = {
       sky.push([x, bw, bh]); x += bw + 2 + rand() * 4;
     }
     const grad = s.createLinearGradient(0, base - 90, 0, base);
-    grad.addColorStop(0, 'rgba(8,18,28,0.75)'); grad.addColorStop(1, 'rgba(6,14,22,0.95)');
+    grad.addColorStop(0, 'rgba(38,39,18,0.8)'); grad.addColorStop(1, 'rgba(28,29,12,0.97)');
     s.fillStyle = grad;
     for (const [x, bw, bh] of sky) s.fillRect(x, base - bh, bw, bh);
     // lit windows
-    s.fillStyle = 'rgba(248,198,112,0.35)';
+    s.fillStyle = 'rgba(217,210,124,0.4)';
     for (const [x, bw, bh] of sky) for (let wy = base - bh + 6; wy < base - 6; wy += 8)
       for (let wx = x + 4; wx < x + bw - 4; wx += 7) if (rand() < 0.12) s.fillRect(wx, wy, 2, 3);
 
     // Smokestacks
     stacks = PLUME.stacks.map(f => ({ x: w * f, top: base - (w < 700 ? 70 : 104) }));
-    s.fillStyle = 'rgba(6,14,22,0.95)';
+    s.fillStyle = 'rgba(28,29,12,0.97)';
     for (const st of stacks) {
       s.fillRect(st.x - 4, st.top, 8, base - st.top);
-      s.fillStyle = 'rgba(236,128,140,0.5)'; s.fillRect(st.x - 4, st.top + 8, 8, 2);
-      s.fillStyle = 'rgba(6,14,22,0.95)';
+      s.fillStyle = 'rgba(140,182,238,0.6)'; s.fillRect(st.x - 4, st.top + 8, 8, 2);
+      s.fillStyle = 'rgba(28,29,12,0.97)';
     }
   }
 
@@ -184,11 +184,11 @@ const PLUME = {
     // Sun
     const sx = w * PLUME.sun.x, sy = h * PLUME.sun.y;
     const glow = ctx.createRadialGradient(sx, sy, 0, sx, sy, w * 0.45);
-    glow.addColorStop(0, 'rgba(255,214,150,0.30)'); glow.addColorStop(0.12, 'rgba(248,198,112,0.14)');
-    glow.addColorStop(1, 'rgba(248,198,112,0)');
+    glow.addColorStop(0, 'rgba(236,230,160,0.32)'); glow.addColorStop(0.12, 'rgba(217,210,124,0.15)');
+    glow.addColorStop(1, 'rgba(217,210,124,0)');
     ctx.fillStyle = glow; ctx.fillRect(0, 0, w, h);
-    ctx.fillStyle = 'rgba(255,226,176,0.9)'; ctx.beginPath(); ctx.arc(sx, sy, 16, 0, 7); ctx.fill();
-    ctx.strokeStyle = 'rgba(255,226,176,0.18)'; ctx.lineWidth = 1;
+    ctx.fillStyle = 'rgba(240,236,180,0.95)'; ctx.beginPath(); ctx.arc(sx, sy, 16, 0, 7); ctx.fill();
+    ctx.strokeStyle = 'rgba(240,236,180,0.2)'; ctx.lineWidth = 1;
     for (let i = 0; i < 3; i++) { ctx.beginPath(); ctx.arc(sx, sy, 26 + i * 12 + (t * 20 % 12), 0, 7); ctx.stroke(); }
 
     // Mesh cells tinted by concentration (colour = dominant species)
@@ -227,7 +227,7 @@ const PLUME = {
       const y = h - 18;
       for (const [txt, col] of parts) {
         if (col) { ctx.fillStyle = rgba(col, 0.95); ctx.beginPath(); ctx.arc(x + 3, y, 3, 0, 7); ctx.fill(); x += 12; }
-        ctx.fillStyle = 'rgba(243,239,231,0.7)'; ctx.fillText(txt, x, y); x += ctx.measureText(txt).width;
+        ctx.fillStyle = 'rgba(244,245,234,0.75)'; ctx.fillText(txt, x, y); x += ctx.measureText(txt).width;
       }
     }
   }
