@@ -32,6 +32,9 @@ intro: >
         <a href="{{ r.file | relative_url }}" download>Download</a>
       </div>
     </header>
+    {%- unless r.embed == false %}
+    <iframe class="resource-card__pdf" src="{{ r.file | relative_url }}#view=FitH" title="{{ r.title }}" loading="lazy"></iframe>
+    {%- endunless %}
     {%- if r.preview %}
     <a class="resource-card__preview" href="{{ r.file | relative_url }}" target="_blank" rel="noopener" aria-label="Open {{ r.title }}">
       <img src="{{ r.preview | relative_url }}" alt="First page of {{ r.title }}" loading="lazy">

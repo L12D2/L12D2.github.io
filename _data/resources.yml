@@ -2,7 +2,9 @@
 # 1. Upload the PDF into assets/resources/  (on GitHub: Add file → Upload files)
 # 2. Copy a block below, paste it in, and fill it in.
 # `category` groups items under a heading.
-# `preview` is an image of the first page (optional). To make one on a Mac:
+# The PDF is embedded so visitors can scroll it on the page. Set `embed: false`
+# to show only the buttons. `preview` is an image of the first page, shown on
+# phones (where embedded PDFs don't work). To make one on a Mac:
 #   open the PDF in Preview → File → Export → Format: JPEG
 
 - title: "Graduate Research Plan: Understanding the nexus between street-level pollution and urban heat through high-resolution urban environmental modeling"
