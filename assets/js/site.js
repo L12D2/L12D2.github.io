@@ -13,7 +13,7 @@ document.documentElement.classList.add('js');
 const PLUME = {
   stacks: [0.07, 0.19, 0.34],     // smokestack positions (fraction of width)
   sun: { x: 0.6, y: 0.13 },       // sun position (fraction of width/height)
-  boundaryLayer: 0.72,            // boundary-layer depth (fraction of header height)
+  // The boundary-layer top is the black line above the stats (.hero__stats)
   windSpeed: 0.95,                // pixels per frame
   hexSize: 13,                    // mesh cell radius in pixels (smaller = finer mesh)
   meshLine: 1.4,                  // mesh line thickness
@@ -25,6 +25,9 @@ const PLUME = {
     NOx:  [122, 62, 28],          // brown (NO₂ is a brown gas)
     VOC:  [78, 138, 16],          // leaf green (many VOCs come from trees)
     O3:   [232, 140, 0],          // amber
+    cellNOx: [255, 150, 90],      // brighter versions used to fill the mesh cells
+    cellVOC: [170, 235, 60],
+    cellO3:  [255, 214, 40],
     city: [159, 93, 53],          // rust #9F5D35
   },
 };
@@ -110,12 +113,18 @@ const PLUME = {
     for (let x = 0; x < w; x += 22) s.fillRect(x, base + ROAD / 2 - 0.5, 11, 1);
   }
 
+  // Boundary-layer top = the black line above the stats
+  function measureBoundaryLayer() {
+    const stats = hero.querySelector('.hero__stats');
+    blTop = stats ? stats.getBoundingClientRect().top - canvas.getBoundingClientRect().top : h * 0.3;
+  }
+
   function resize() {
     dpr = Math.min(window.devicePixelRatio || 1, 2);
     w = canvas.clientWidth; h = canvas.clientHeight;
     canvas.width = w * dpr; canvas.height = h * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    blTop = h * (1 - PLUME.boundaryLayer);
+    measureBoundaryLayer();
     particles = []; flashes = []; cells = new Map();
     const palette = ['#ffffff', '#111111', '#9DD431', '#2b6577', '#e8e2d6', '#c0392b'];
     cars = Array.from({ length: Math.max(3, Math.round(w * PLUME.cars)) }, (_, i) => {
@@ -221,22 +230,15 @@ const PLUME = {
     for (const c of cells.values()) {
       const total = c.NOx + c.VOC + c.O3;
       const kind = c.O3 >= c.NOx && c.O3 >= c.VOC ? 'O3' : c.NOx >= c.VOC ? 'NOx' : 'VOC';
-      const a = Math.min(0.2, total * 0.07);
+      const a = Math.min(0.42, total * 0.12);
       if (a < 0.01) continue;
       const [cx, cy] = hexCenter(c.q, c.r);
       hexPath(ctx, cx, cy, R - 0.5);
-      ctx.fillStyle = rgba(C[kind], a); ctx.fill();
+      ctx.fillStyle = rgba(C['cell' + kind], a); ctx.fill();
     }
 
     ctx.drawImage(staticLayer, 0, 0, w, h);
 
-    // Boundary-layer top
-    ctx.setLineDash([6, 6]); ctx.strokeStyle = 'rgba(17,17,17,0.16)'; ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(0, blTop); ctx.lineTo(w, blTop); ctx.stroke(); ctx.setLineDash([]);
-    if (w >= 760) {
-      ctx.font = '600 10px Sora, system-ui, sans-serif'; ctx.textBaseline = 'bottom';
-      ctx.fillStyle = 'rgba(17,17,17,0.5)'; ctx.fillText('BOUNDARY-LAYER TOP', 16, blTop - 4);
-    }
 
     // Cars
     for (const car of cars) {
@@ -282,6 +284,7 @@ const PLUME = {
 
   resize();
   addEventListener('resize', () => { clearTimeout(resize.t); resize.t = setTimeout(resize, 150); });
+  document.fonts?.ready.then(measureBoundaryLayer);   // the line can move once the font loads
   hero.addEventListener('pointermove', e => {
     const rect = hero.getBoundingClientRect();
     windTarget = ((e.clientY - rect.top) / rect.height - 0.6) * 0.9;   // steer the wind

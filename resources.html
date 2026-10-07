@@ -2,7 +2,15 @@
 layout: page
 title: Resources
 permalink: /resources/
-intro: Guides, handouts, and documents you're welcome to download.
+intro: >
+  If you are a prospective Goldwater or NSF Graduate Research Fellowship
+  (GRFP) applicant, I hope these can be of use to you in your journey!
+  I cannot emphasize enough the importance of working with your mentor on
+  your application. Additionally, I would have someone who is not familiar
+  with your work read your materials! A perspective from someone who is not
+  familiar with your work is crucial, especially given that your reviewers
+  are more than likely not going to be familiar with the breadth and depth
+  of your work.
 ---
 {%- comment -%} Edit the list in _data/resources.yml; put files in assets/resources/ {%- endcomment -%}
 {%- assign n = site.data.resources | size -%}
@@ -10,19 +18,25 @@ intro: Guides, handouts, and documents you're welcome to download.
 {%- assign groups = site.data.resources | group_by: "category" -%}
 {%- for g in groups %}
 {%- if g.name != "" %}<h2 class="sub">{{ g.name }}</h2>{% endif %}
-<ul class="resource-list">
+<div class="resource-cards">
   {%- for r in g.items %}
-  <li>
-    <a href="{{ r.file | relative_url }}" target="_blank" rel="noopener">
+  <article class="resource-card">
+    <header class="resource-card__head">
       <span class="resource-list__icon">{% include icon.html name="pdf" %}</span>
-      <span>
-        <strong>{{ r.title }}</strong>
-        {%- if r.description %}<span class="muted small">{{ r.description }}</span>{% endif %}
-      </span>
-      {%- if r.date %}<span class="meta">{{ r.date }}</span>{% endif %}
-    </a>
-  </li>
+      <div>
+        <h3>{{ r.title }}</h3>
+        {%- if r.description %}<p class="muted small">{{ r.description }}</p>{% endif %}
+      </div>
+      <div class="resource-card__actions">
+        <a href="{{ r.file | relative_url }}" target="_blank" rel="noopener">Open ↗</a>
+        <a href="{{ r.file | relative_url }}" download>Download</a>
+      </div>
+    </header>
+    {%- unless r.embed == false %}
+    <iframe class="resource-card__pdf" src="{{ r.file | relative_url }}#view=FitH" title="{{ r.title }}" loading="lazy"></iframe>
+    {%- endunless %}
+  </article>
   {%- endfor %}
-</ul>
+</div>
 {%- endfor %}
 {%- endif %}

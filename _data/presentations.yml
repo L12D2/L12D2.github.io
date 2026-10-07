@@ -2,6 +2,8 @@
 # format: oral | poster
 # presenter: true → you presented it (default true; set false for co-author only)
 # award: true     → won a presentation award (shown with a ribbon)
+# poster:  /assets/posters/file.pdf          → the poster PDF (Posters page)
+# preview: /assets/posters/previews/file.jpg → an image of it (shown as the preview)
 
 - authors: Thompson, L., Gaubert, B., Eroglu, O., & MELODIES MONET Development Team
   date: July 2026
@@ -52,6 +54,8 @@
   event: AMS Annual Student Conference
   place: Houston, Texas
   format: poster
+  poster: /assets/posters/web_jelpc_capstone_poster.pdf
+  preview: /assets/posters/previews/web_jelpc_capstone_poster.jpg
 
 - authors: Thompson, L., Delconte, C., Krautbauer, M. K., Scarberry, K., Berry, C. G., Zondlo, A., Phipps, W., Douglas, J. C., & Moreno, J.
   date: January 2026
@@ -67,6 +71,8 @@
   event: American Geophysical Union Annual Meeting
   place: New Orleans, Louisiana
   format: poster
+  poster: /assets/posters/mm_dev_poster.pdf
+  preview: /assets/posters/previews/mm_dev_poster.jpg
 
 - authors: Thompson, L., Schwantes, R., Bruckner, M., Lichtig, P., Hsu, C., & McDonald, B.
   date: December 2025
@@ -74,6 +80,8 @@
   event: American Geophysical Union Annual Meeting
   place: New Orleans, Louisiana
   format: poster
+  poster: /assets/posters/mm_cs_poster.pdf
+  preview: /assets/posters/previews/mm_cs_poster.jpg
 
 - authors: Thompson, L., Schwantes, R., Bruckner, M., Lichtig, P., Hsu, C., & McDonald, B.
   date: October 2025
@@ -104,6 +112,8 @@
   place: Norman, Oklahoma
   format: poster
   award: true
+  poster: /assets/posters/A13ThompsonLiam.pdf
+  preview: /assets/posters/previews/A13ThompsonLiam.jpg
 
 - authors: Thompson, L., & Wang, C.
   date: April 2025
@@ -112,6 +122,8 @@
   place: Norman, Oklahoma
   format: poster
   award: true
+  poster: /assets/posters/A13.1ThompsonLiam.pdf
+  preview: /assets/posters/previews/A13.1ThompsonLiam.jpg
 
 - authors: Thompson, L., Wang, E., Montecalvo, D., & Snead, K.
   date: January 2025
@@ -127,6 +139,8 @@
   place: New Orleans, Louisiana
   format: poster
   award: true
+  poster: /assets/posters/web_ams2025_conus404_poster.pdf
+  preview: /assets/posters/previews/web_ams2025_conus404_poster.jpg
 
 - authors: Thompson, L.
   date: December 2025
@@ -149,6 +163,8 @@
   place: Norman, Oklahoma
   format: poster
   award: true
+  poster: /assets/posters/web_GISDay2024Poster_final.pdf
+  preview: /assets/posters/previews/web_GISDay2024Poster_final.jpg
 
 - authors: Thompson, L., & Wang, C.
   date: August 2024
