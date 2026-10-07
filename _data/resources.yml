@@ -1,21 +1,25 @@
 # RESOURCES — files people can view and download.
 # 1. Upload the PDF into assets/resources/  (on GitHub: Add file → Upload files)
 # 2. Copy a block below, paste it in, and fill it in.
-# `category` groups items under a heading. Set `embed: false` to show
-# just a link instead of the built-in PDF preview.
+# `category` groups items under a heading.
+# `preview` is an image of the first page (optional). To make one on a Mac:
+#   open the PDF in Preview → File → Export → Format: JPEG
 
 - title: "Graduate Research Plan: Understanding the nexus between street-level pollution and urban heat through high-resolution urban environmental modeling"
   description: My NSF GRFP research proposal (2 pages).
   file: /assets/resources/grfp/web_thompsonLiam_proposal.pdf
+  preview: /assets/resources/previews/web_thompsonLiam_proposal.jpg
   category: NSF Graduate Research Fellowship (GRFP)
 
 - title: Personal, Relevant Background, and Future Goals Statement
   description: My NSF GRFP personal statement (3 pages).
   file: /assets/resources/grfp/web_thompsonLiam_ps.pdf
+  preview: /assets/resources/previews/web_thompsonLiam_ps.jpg
   category: NSF Graduate Research Fellowship (GRFP)
 
 - title: "Research Essay: Assessing a Convection-Permitting Numerical Weather Model in Cities"
   description: My 2025 Barry Goldwater Scholarship research essay (3 pages).
   file: /assets/resources/goldwater/web_ThompsonLiam-research-essay-2025.pdf
+  preview: /assets/resources/previews/web_ThompsonLiam-research-essay-2025.jpg
   date: "2025"
   category: Barry Goldwater Scholarship
