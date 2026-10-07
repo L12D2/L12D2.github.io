@@ -2,24 +2,30 @@
 document.documentElement.classList.add('js');
 
 /* ── 1. Hero: NOx + VOC plume → ozone, on an MPAS-style mesh ─────
-   Smokestacks emit NOx and VOC. The wind carries the plume across a
-   hexagonal mesh (like an unstructured model grid). Where sunlight is
-   strong, NOx and VOC sharing a cell react to form ozone (O₃).
+   Smokestacks and cars emit NOx and VOC. The wind carries the plume
+   across a hexagonal mesh (like an unstructured model grid), mixing
+   it up to the top of the boundary layer. Where sunlight is strong,
+   NOx and VOC sharing a cell react to form ozone (O₃).
    Each cell tints by the concentration passing through it.
    Move the mouse up/down over the header to shift the wind.
 
    Tweak these to change the look ↓                                   */
 const PLUME = {
   stacks: [0.07, 0.19, 0.34],     // smokestack positions (fraction of width)
-  sun: { x: 0.86, y: 0.16 },      // sun position (fraction of width/height)
+  sun: { x: 0.6, y: 0.13 },       // sun position (fraction of width/height)
+  boundaryLayer: 0.72,            // boundary-layer depth (fraction of header height)
   windSpeed: 0.95,                // pixels per frame
-  hexSize: 22,                    // mesh cell radius in pixels
+  hexSize: 13,                    // mesh cell radius in pixels (smaller = finer mesh)
+  meshLine: 1.4,                  // mesh line thickness
+  particleSize: 2.8,              // NOx / VOC dot size (O₃ is a bit bigger)
+  cars: 1 / 150,                  // cars per pixel of width
   reactionRate: 0.035,            // chance per frame a sunlit NOx+VOC pair reacts
-  maxParticles: 750,
+  maxParticles: 900,
   colors: {                       // r, g, b
-    NOx: [140, 182, 238],         // sky
-    VOC: [157, 212, 49],          // lime
-    O3:  [226, 218, 120],         // khaki gold
+    NOx:  [122, 62, 28],          // brown (NO₂ is a brown gas)
+    VOC:  [78, 138, 16],          // leaf green (many VOCs come from trees)
+    O3:   [232, 140, 0],          // amber
+    city: [159, 93, 53],          // rust #9F5D35
   },
 };
 
@@ -29,11 +35,12 @@ const PLUME = {
   const hero = canvas.parentElement;
   const ctx = canvas.getContext('2d');
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  canvas.style.opacity = '1';     // this effect manages its own transparency
 
   const SQ3 = Math.sqrt(3), R = PLUME.hexSize, C = PLUME.colors;
   const rgba = (c, a) => `rgba(${c[0]},${c[1]},${c[2]},${a})`;
-  let w, h, dpr, staticLayer, stacks = [], particles = [], flashes = [];
+  const shade = (c, k) => c.map(v => Math.round(v * k));
+  const ROAD = 14;                                   // road height in pixels
+  let w, h, dpr, staticLayer, blTop, stacks = [], cars = [], particles = [], flashes = [];
   let cells = new Map(), t = 0, running = true, wind = -0.1, windTarget = -0.1;
 
   // Deterministic random numbers so the skyline looks the same on every visit
@@ -59,9 +66,9 @@ const PLUME = {
     }
     c.closePath();
   }
-  const sunlight = (x, y) => Math.max(0, 1 - Math.hypot(x - w * PLUME.sun.x, (y - h * PLUME.sun.y) * 1.3) / (w * 0.62));
+  const sunlight = (x, y) => Math.max(0, 1 - Math.hypot(x - w * PLUME.sun.x, (y - h * PLUME.sun.y) * 1.2) / (w * 0.6));
 
-  // ── Things drawn once per resize: mesh, skyline, stacks ──
+  // ── Things drawn once per resize: mesh, skyline, stacks, road ──
   function buildStatic() {
     staticLayer = document.createElement('canvas');
     staticLayer.width = w * dpr; staticLayer.height = h * dpr;
@@ -69,36 +76,38 @@ const PLUME = {
     s.setTransform(dpr, 0, 0, dpr, 0, 0);
 
     // Mesh
-    s.strokeStyle = 'rgba(220,215,245,0.06)'; s.lineWidth = 1;
+    s.strokeStyle = 'rgba(255,255,255,0.22)'; s.lineWidth = PLUME.meshLine;
     const rows = Math.ceil(h / (R * 1.5)) + 1, cols = Math.ceil(w / (R * SQ3)) + 2;
     for (let r = -1; r <= rows; r++) for (let c = -1; c <= cols; c++) {
       const [cx, cy] = hexCenter(c - Math.floor(r / 2), r);
       hexPath(s, cx, cy, R); s.stroke();
     }
 
-    // Skyline
-    const rand = seeded(7), base = h, sky = [];
+    // Skyline (rust)
+    const rand = seeded(7), base = h - ROAD, sky = [];
     for (let x = -10; x < w + 40;) {
       const bw = 18 + rand() * 46, bh = 18 + rand() * (w < 700 ? 38 : 64);
       sky.push([x, bw, bh]); x += bw + 2 + rand() * 4;
     }
-    const grad = s.createLinearGradient(0, base - 90, 0, base);
-    grad.addColorStop(0, 'rgba(38,39,18,0.8)'); grad.addColorStop(1, 'rgba(28,29,12,0.97)');
-    s.fillStyle = grad;
-    for (const [x, bw, bh] of sky) s.fillRect(x, base - bh, bw, bh);
-    // lit windows
-    s.fillStyle = 'rgba(217,210,124,0.4)';
+    sky.forEach(([x, bw, bh], i) => {
+      s.fillStyle = rgba(shade(C.city, i % 3 === 0 ? 0.82 : i % 3 === 1 ? 1 : 0.92), 1);
+      s.fillRect(x, base - bh, bw, bh);
+    });
+    s.fillStyle = 'rgba(255,240,215,0.55)';                       // windows
     for (const [x, bw, bh] of sky) for (let wy = base - bh + 6; wy < base - 6; wy += 8)
-      for (let wx = x + 4; wx < x + bw - 4; wx += 7) if (rand() < 0.12) s.fillRect(wx, wy, 2, 3);
+      for (let wx = x + 4; wx < x + bw - 4; wx += 7) if (rand() < 0.22) s.fillRect(wx, wy, 2, 3);
 
     // Smokestacks
-    stacks = PLUME.stacks.map(f => ({ x: w * f, top: base - (w < 700 ? 70 : 104) }));
-    s.fillStyle = 'rgba(28,29,12,0.97)';
+    stacks = PLUME.stacks.map(f => ({ x: w * f, top: base - (w < 700 ? 74 : 110) }));
     for (const st of stacks) {
-      s.fillRect(st.x - 4, st.top, 8, base - st.top);
-      s.fillStyle = 'rgba(140,182,238,0.6)'; s.fillRect(st.x - 4, st.top + 8, 8, 2);
-      s.fillStyle = 'rgba(28,29,12,0.97)';
+      s.fillStyle = rgba(shade(C.city, 0.62), 1); s.fillRect(st.x - 5, st.top, 10, base - st.top);
+      s.fillStyle = 'rgba(255,255,255,0.75)'; s.fillRect(st.x - 5, st.top + 10, 10, 3);
     }
+
+    // Road with lane markings
+    s.fillStyle = '#3a3533'; s.fillRect(0, base, w, ROAD);
+    s.fillStyle = 'rgba(255,255,255,0.55)';
+    for (let x = 0; x < w; x += 22) s.fillRect(x, base + ROAD / 2 - 0.5, 11, 1);
   }
 
   function resize() {
@@ -106,44 +115,61 @@ const PLUME = {
     w = canvas.clientWidth; h = canvas.clientHeight;
     canvas.width = w * dpr; canvas.height = h * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    blTop = h * (1 - PLUME.boundaryLayer);
     particles = []; flashes = []; cells = new Map();
+    const palette = ['#ffffff', '#111111', '#9DD431', '#2b6577', '#e8e2d6', '#c0392b'];
+    cars = Array.from({ length: Math.max(3, Math.round(w * PLUME.cars)) }, (_, i) => {
+      const dir = i % 2 ? -1 : 1;
+      return { x: Math.random() * w, dir, speed: 0.7 + Math.random() * 0.8,
+               y: h - ROAD + (dir > 0 ? ROAD * 0.72 : ROAD * 0.28), color: palette[i % palette.length] };
+    });
     buildStatic();
   }
 
   // ── Emission ──
+  const cap = () => Math.min(PLUME.maxParticles, Math.round(w * h / 900));
   function emit() {
-    const cap = Math.min(PLUME.maxParticles, Math.round(w * h / 1100));
-    if (particles.length >= cap) return;
+    if (particles.length >= cap()) return;
     for (const st of stacks) {
       if (Math.random() < 0.55) particles.push({
-        x: st.x + (Math.random() - 0.5) * 4, y: st.top - 2,
-        kind: Math.random() < 0.6 ? 'NOx' : 'VOC', age: 0, life: 700 + Math.random() * 600,
+        x: st.x + (Math.random() - 0.5) * 5, y: st.top - 2, rise: 1.6,
+        kind: Math.random() < 0.6 ? 'NOx' : 'VOC', age: 0, life: 800 + Math.random() * 700,
       });
     }
-    // Traffic and trees add VOC near street level
-    if (Math.random() < 0.35) particles.push({
-      x: Math.random() * w * 0.5, y: h - 20 - Math.random() * 30,
-      kind: 'VOC', age: 0, life: 600 + Math.random() * 500,
-    });
+    // Traffic: tailpipe NOx, plus some VOC
+    for (const car of cars) {
+      if (Math.random() < 0.05) particles.push({
+        x: car.x - car.dir * 9, y: car.y - 2, rise: 0.5,
+        kind: Math.random() < 0.7 ? 'NOx' : 'VOC', age: 0, life: 700 + Math.random() * 600,
+      });
+    }
   }
 
   // ── One simulation step ──
   function step() {
     t += 0.01;
     wind += (windTarget - wind) * 0.02;
+    for (const car of cars) {
+      car.x += car.dir * car.speed;
+      if (car.x > w + 20) car.x = -20; else if (car.x < -20) car.x = w + 20;
+    }
     emit();
 
     const buckets = new Map();
     for (const p of particles) {
-      // Wind field: mean flow + gentle waves; buoyant rise near the stack; turbulent mixing grows with age
+      // Wind field: mean flow + gentle waves; buoyant rise near the source;
+      // turbulent mixing grows with age and fills the boundary layer
       const ang = wind + 0.28 * Math.sin(p.y * 0.006 + t * 2) + 0.2 * Math.cos(p.x * 0.004 - t * 1.5);
       const sp = PLUME.windSpeed * (0.85 + 0.25 * Math.sin(p.x * 0.002 + t));
-      const rise = 1.1 * Math.exp(-p.age / 45);
-      const mix = 0.25 + Math.min(1.1, Math.sqrt(p.age) * 0.05);
+      const rise = p.rise * Math.exp(-p.age / 60);
+      const mix = 0.3 + Math.min(1.4, Math.sqrt(p.age) * 0.065);
       p.x += Math.cos(ang) * sp + (Math.random() - 0.5) * mix;
-      p.y += Math.sin(ang) * sp - rise + (Math.random() - 0.5) * mix;
+      p.y += Math.sin(ang) * sp * 0.6 - rise + (Math.random() - 0.5) * mix * 1.6;
+      // The boundary-layer top acts like a lid: reflect particles back down
+      if (p.y < blTop) p.y = blTop + (blTop - p.y);
+      if (p.y > h - ROAD - 2) p.y = h - ROAD - 2 - Math.random() * 3;
       p.age++;
-      if (p.age > p.life || p.x > w + 10 || p.x < -10 || p.y < -10 || p.y > h) { p.dead = true; continue; }
+      if (p.age > p.life || p.x > w + 10 || p.x < -10) { p.dead = true; continue; }
 
       const [q, r] = pixelToHex(p.x, p.y), key = q * 10000 + r;
       let b = buckets.get(key); if (!b) buckets.set(key, b = { q, r, NOx: [], VOC: [], O3: [] });
@@ -157,7 +183,7 @@ const PLUME = {
       if (sun < 0.08) continue;
       for (const n of b.NOx) {
         if (!b.VOC.length) break;
-        if (Math.random() < PLUME.reactionRate * sun * 2) {
+        if (Math.random() < PLUME.reactionRate * sun * 3) {
           const v = b.VOC.pop(); v.dead = true;
           n.kind = 'O3'; n.life = n.age + 500 + Math.random() * 400; b.O3.push(n);
           if (flashes.length < 40) flashes.push({ x: n.x, y: n.y, age: 0 });
@@ -169,7 +195,7 @@ const PLUME = {
     for (const c of cells.values()) { c.NOx *= 0.95; c.VOC *= 0.95; c.O3 *= 0.95; }
     for (const [key, b] of buckets) {
       let c = cells.get(key); if (!c) cells.set(key, c = { q: b.q, r: b.r, NOx: 0, VOC: 0, O3: 0 });
-      c.NOx += b.NOx.length * 0.05; c.VOC += b.VOC.length * 0.05; c.O3 += b.O3.length * 0.05;
+      c.NOx += b.NOx.length * 0.08; c.VOC += b.VOC.length * 0.08; c.O3 += b.O3.length * 0.08;
     }
     for (const [k, c] of cells) if (c.NOx + c.VOC + c.O3 < 0.01) cells.delete(k);
 
@@ -183,51 +209,71 @@ const PLUME = {
 
     // Sun
     const sx = w * PLUME.sun.x, sy = h * PLUME.sun.y;
-    const glow = ctx.createRadialGradient(sx, sy, 0, sx, sy, w * 0.45);
-    glow.addColorStop(0, 'rgba(236,230,160,0.32)'); glow.addColorStop(0.12, 'rgba(217,210,124,0.15)');
-    glow.addColorStop(1, 'rgba(217,210,124,0)');
+    const glow = ctx.createRadialGradient(sx, sy, 0, sx, sy, w * 0.42);
+    glow.addColorStop(0, 'rgba(255,252,230,0.75)'); glow.addColorStop(0.1, 'rgba(255,248,215,0.35)');
+    glow.addColorStop(1, 'rgba(255,248,215,0)');
     ctx.fillStyle = glow; ctx.fillRect(0, 0, w, h);
-    ctx.fillStyle = 'rgba(240,236,180,0.95)'; ctx.beginPath(); ctx.arc(sx, sy, 16, 0, 7); ctx.fill();
-    ctx.strokeStyle = 'rgba(240,236,180,0.2)'; ctx.lineWidth = 1;
-    for (let i = 0; i < 3; i++) { ctx.beginPath(); ctx.arc(sx, sy, 26 + i * 12 + (t * 20 % 12), 0, 7); ctx.stroke(); }
+    ctx.fillStyle = '#fffbe8'; ctx.beginPath(); ctx.arc(sx, sy, 20, 0, 7); ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.45)'; ctx.lineWidth = 1.2;
+    for (let i = 0; i < 3; i++) { ctx.beginPath(); ctx.arc(sx, sy, 30 + i * 13 + (t * 20 % 13), 0, 7); ctx.stroke(); }
 
     // Mesh cells tinted by concentration (colour = dominant species)
     for (const c of cells.values()) {
       const total = c.NOx + c.VOC + c.O3;
       const kind = c.O3 >= c.NOx && c.O3 >= c.VOC ? 'O3' : c.NOx >= c.VOC ? 'NOx' : 'VOC';
-      const a = Math.min(0.13, total * 0.05);
+      const a = Math.min(0.2, total * 0.07);
       if (a < 0.01) continue;
       const [cx, cy] = hexCenter(c.q, c.r);
-      hexPath(ctx, cx, cy, R - 1);
+      hexPath(ctx, cx, cy, R - 0.5);
       ctx.fillStyle = rgba(C[kind], a); ctx.fill();
     }
 
     ctx.drawImage(staticLayer, 0, 0, w, h);
 
+    // Boundary-layer top
+    ctx.setLineDash([6, 6]); ctx.strokeStyle = 'rgba(17,17,17,0.16)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(0, blTop); ctx.lineTo(w, blTop); ctx.stroke(); ctx.setLineDash([]);
+    if (w >= 760) {
+      ctx.font = '600 10px Sora, system-ui, sans-serif'; ctx.textBaseline = 'bottom';
+      ctx.fillStyle = 'rgba(17,17,17,0.5)'; ctx.fillText('BOUNDARY-LAYER TOP', 16, blTop - 4);
+    }
+
+    // Cars
+    for (const car of cars) {
+      const x = car.x, y = car.y;
+      ctx.fillStyle = car.color;
+      ctx.beginPath(); ctx.roundRect(x - 8, y - 5, 16, 5, 1.5); ctx.fill();
+      ctx.beginPath(); ctx.roundRect(x - 4 - car.dir, y - 8, 9, 4, 1.5); ctx.fill();
+      ctx.fillStyle = '#111'; ctx.fillRect(x - 6, y - 0.5, 3, 1.5); ctx.fillRect(x + 3, y - 0.5, 3, 1.5);
+      ctx.fillStyle = 'rgba(255,236,150,0.95)'; ctx.fillRect(x + car.dir * 7 - 0.5, y - 4, 1.5, 1.5);
+    }
+
     // Particles
-    ctx.globalCompositeOperation = 'lighter';
     for (const p of particles) {
-      const fade = Math.min(1, p.age / 20, (p.life - p.age) / 80);
-      ctx.fillStyle = rgba(C[p.kind], (p.kind === 'O3' ? 0.85 : 0.6) * fade);
-      const sz = p.kind === 'O3' ? 2.2 : 1.6;
-      ctx.fillRect(p.x - sz / 2, p.y - sz / 2, sz, sz);
+      const fade = Math.min(1, p.age / 15, (p.life - p.age) / 80);
+      ctx.fillStyle = rgba(C[p.kind], (p.kind === 'O3' ? 0.95 : 0.75) * fade);
+      const sz = PLUME.particleSize * (p.kind === 'O3' ? 1.25 : 1);
+      ctx.beginPath(); ctx.arc(p.x, p.y, sz / 2, 0, 7); ctx.fill();
     }
     // Reaction flashes
+    ctx.lineWidth = 1.2;
     for (const f of flashes) {
-      ctx.strokeStyle = rgba(C.O3, 0.5 * (1 - f.age / 28));
-      ctx.beginPath(); ctx.arc(f.x, f.y, 2 + f.age * 0.35, 0, 7); ctx.stroke();
+      ctx.strokeStyle = rgba(C.O3, 0.7 * (1 - f.age / 28));
+      ctx.beginPath(); ctx.arc(f.x, f.y, 2 + f.age * 0.4, 0, 7); ctx.stroke();
     }
-    ctx.globalCompositeOperation = 'source-over';
 
     // Legend
     if (w >= 760) {
-      ctx.font = '500 11px Inter, system-ui, sans-serif'; ctx.textBaseline = 'middle';
+      ctx.font = '600 11px Sora, system-ui, sans-serif'; ctx.textBaseline = 'middle';
       const parts = [['NOx', C.NOx], [' + ', null], ['VOC', C.VOC], [' + sunlight  →  ', null], ['O₃', C.O3]];
-      let x = w - 24 - parts.reduce((s, [txt, col]) => s + ctx.measureText(txt).width + (col ? 12 : 0), 0);
-      const y = h - 18;
+      const width = parts.reduce((s, [txt, col]) => s + ctx.measureText(txt).width + (col ? 12 : 0), 0);
+      let x = w - 24 - width;
+      const y = 26;
+      ctx.fillStyle = 'rgba(255,255,255,0.7)';
+      ctx.beginPath(); ctx.roundRect(x - 10, y - 11, width + 20, 22, 11); ctx.fill();
       for (const [txt, col] of parts) {
-        if (col) { ctx.fillStyle = rgba(col, 0.95); ctx.beginPath(); ctx.arc(x + 3, y, 3, 0, 7); ctx.fill(); x += 12; }
-        ctx.fillStyle = 'rgba(244,245,234,0.75)'; ctx.fillText(txt, x, y); x += ctx.measureText(txt).width;
+        if (col) { ctx.fillStyle = rgba(col, 1); ctx.beginPath(); ctx.arc(x + 3, y, 3.5, 0, 7); ctx.fill(); x += 12; }
+        ctx.fillStyle = '#111'; ctx.fillText(txt, x, y); x += ctx.measureText(txt).width;
       }
     }
   }
@@ -303,19 +349,6 @@ const PLUME = {
   }));
   more.addEventListener('click', () => { expanded = true; render(); });
   render();
-})();
-
-/* ── 5. Theme toggle (remembers your choice) ────────────────── */
-(function theme() {
-  const btn = document.querySelector('.theme-toggle');
-  if (!btn) return;
-  btn.addEventListener('click', () => {
-    const root = document.documentElement;
-    const current = root.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    const next = current === 'dark' ? 'light' : 'dark';
-    root.dataset.theme = next;
-    try { localStorage.setItem('theme', next); } catch (e) {}
-  });
 })();
 
 /* ── 6. "Back to top" ───────────────────────────────────────── */

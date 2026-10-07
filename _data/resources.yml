@@ -1,0 +1,12 @@
+# RESOURCES — files people can download.
+# 1. Upload the PDF into assets/resources/  (on GitHub: Add file → Upload files)
+# 2. Copy a block below, paste it at the top, and fill it in.
+# `category` groups items under a heading (optional).
+
+# Example (remove the # signs to use it):
+# - title: Example resource — replace me
+#   description: One line about what this document is and who it's for.
+#   file: /assets/resources/example.pdf
+#   date: October 2026
+#   category: Guides
+

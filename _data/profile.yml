@@ -42,5 +42,8 @@ links:
     
 # cv_pdf: /assets/Thompson_CV.pdf   (leave blank to hide the button)
 cv_pdf: /assets/month_year_cv_lt.pdf
+# Photo shown in the header (leave blank to hide)
+portrait: /assets/photos/portrait.jpg
+
 # Month/Year shown in the footer as "last updated"
 updated: September 2026

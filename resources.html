@@ -1,0 +1,28 @@
+---
+layout: page
+title: Resources
+permalink: /resources/
+intro: Guides, handouts, and documents you're welcome to download.
+---
+{%- comment -%} Edit the list in _data/resources.yml; put files in assets/resources/ {%- endcomment -%}
+{%- assign n = site.data.resources | size -%}
+{%- if n == 0 %}<p class="muted">Resources are coming soon.</p>{% else -%}
+{%- assign groups = site.data.resources | group_by: "category" -%}
+{%- for g in groups %}
+{%- if g.name != "" %}<h2 class="sub">{{ g.name }}</h2>{% endif %}
+<ul class="resource-list">
+  {%- for r in g.items %}
+  <li>
+    <a href="{{ r.file | relative_url }}" target="_blank" rel="noopener">
+      <span class="resource-list__icon">{% include icon.html name="pdf" %}</span>
+      <span>
+        <strong>{{ r.title }}</strong>
+        {%- if r.description %}<span class="muted small">{{ r.description }}</span>{% endif %}
+      </span>
+      {%- if r.date %}<span class="meta">{{ r.date }}</span>{% endif %}
+    </a>
+  </li>
+  {%- endfor %}
+</ul>
+{%- endfor %}
+{%- endif %}

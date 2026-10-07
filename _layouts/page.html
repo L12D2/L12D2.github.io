@@ -1,0 +1,31 @@
+<!doctype html>
+{%- assign p = site.data.profile -%}
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ page.title }} · {{ p.name }}</title>
+  <meta name="description" content="{{ page.description | default: site.description }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
+</head>
+<body>
+  <header class="hero hero--small">
+    <div class="hero__inner">
+      <nav class="subnav" aria-label="Pages">
+        <a href="{{ '/' | relative_url }}">← {{ p.name }}</a>
+        <a href="{{ '/posters/' | relative_url }}"{% if page.url == '/posters/' %} aria-current="page"{% endif %}>Posters</a>
+        <a href="{{ '/resources/' | relative_url }}"{% if page.url == '/resources/' %} aria-current="page"{% endif %}>Resources</a>
+        <a href="{{ '/photos/' | relative_url }}"{% if page.url == '/photos/' %} aria-current="page"{% endif %}>Photos</a>
+      </nav>
+      <h1 class="hero__name">{{ page.title }}</h1>
+      {%- if page.intro %}<p class="subintro">{{ page.intro }}</p>{% endif %}
+    </div>
+  </header>
+  <main class="subpage">
+    {{ content }}
+  </main>
+</body>
+</html>

@@ -1,0 +1,32 @@
+---
+layout: page
+title: Posters
+permalink: /posters/
+intro: Research posters I've presented at conferences and symposia.
+---
+{%- comment -%}
+  This page reads _data/presentations.yml and shows every entry with
+  format: poster. To attach the poster itself, add ONE of these lines
+  to that entry (put the file in assets/posters/):
+      poster: /assets/posters/my-poster.pdf     ← a PDF
+      poster: /assets/posters/my-poster.png     ← or an image (shows a preview)
+{%- endcomment -%}
+{%- assign posters = site.data.presentations | where: "format", "poster" -%}
+<div class="poster-grid">
+  {%- for t in posters %}
+  {%- assign ext = t.poster | split: "." | last | downcase -%}
+  <article class="poster-card">
+    {%- if t.poster and ext != "pdf" %}
+    <a class="poster-card__thumb" href="{{ t.poster | relative_url }}" target="_blank" rel="noopener"><img src="{{ t.poster | relative_url }}" alt="Poster: {{ t.title }}" loading="lazy"></a>
+    {%- elsif t.poster %}
+    <a class="poster-card__thumb poster-card__thumb--blank" href="{{ t.poster | relative_url }}" target="_blank" rel="noopener"><span>PDF</span></a>
+    {%- endif %}
+    <div class="poster-card__body">
+      <p class="meta">{{ t.date }}{% if t.award %} · <span class="ribbon">Award</span>{% endif %}</p>
+      <h2>{{ t.title }}</h2>
+      <p class="muted small">{{ t.event }} · {{ t.place }}</p>
+      {%- if t.poster %}<a class="file-link" href="{{ t.poster | relative_url }}" target="_blank" rel="noopener">View poster →</a>{% endif %}
+    </div>
+  </article>
+  {%- endfor %}
+</div>
